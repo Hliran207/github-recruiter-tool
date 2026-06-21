@@ -148,6 +148,10 @@ function App() {
 
         {!error && isLoading && <LoadingSkeleton />}
 
+        {!error && !isLoading && hasEmptyResults && analysisResult && (
+          <EmptyResults username={analysisResult.username} />
+        )}
+
         {!error && !isLoading && analysisResult && !hasEmptyResults && (
           <div className="results-panel">
             <div className="results-summary">
@@ -179,19 +183,6 @@ function App() {
                 />
               ))}
             </div>
-          </div>
-        )}
-
-        {!error && !isLoading && analysisResult && !hasEmptyResults && (
-          <div className="results-summary">
-            <p>
-              Analysis for <strong>{analysisResult.username}</strong> —{' '}
-              {analysisResult.repos_analyzed} repo
-              {analysisResult.repos_analyzed === 1 ? '' : 's'}
-            </p>
-            <p className="results-summary-meta">
-              Repo cards coming in the next step…
-            </p>
           </div>
         )}
 

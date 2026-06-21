@@ -73,16 +73,6 @@
   border: 1px dashed #d1d5db;
   border-radius: 12px;
 }
-.results-error {
-  padding: 1rem 1.25rem;
-  color: #991b1b;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 12px;
-}
-
-
-
 .results-summary {
   padding: 1rem 1.25rem;
   background: #fff;
@@ -97,12 +87,6 @@
 .search-input:disabled {
   background: #f3f4f6;
   cursor: not-allowed;
-}
-
-.results-summary-meta {
-  margin: 0.5rem 0 0;
-  color: #6b7280;
-  font-size: 0.9rem;
 }
 
 .results-panel {
@@ -126,17 +110,6 @@
   font-weight: 400;
   font-size: 0.9rem;
 }
-.repo-card {
-  flex: 0 0 320px;
-  min-width: 320px;
-  max-width: 360px;
-  scroll-snap-align: start;
-  padding: 1.25rem;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
-}
 
 .repo-card-list {
   display: grid;
@@ -146,6 +119,13 @@
 .results-summary p {
   margin: 0;
 }
+
+@media (max-width: 900px) {
+  .repo-card-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 640px) {
   .search-row {
     flex-direction: column;
@@ -157,7 +137,6 @@
     padding: 1.25rem 1rem 2rem;
   }
   .repo-card-list {
-    flex-direction: column;
-    overflow-x: visible;
+    grid-template-columns: 1fr;
   }
 }
