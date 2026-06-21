@@ -1,37 +1,76 @@
-from typing import Literal
+from typing import Literal, Optional
+
 from pydantic import BaseModel, Field
 
-ComplexityLevel = Literal["low", "medium", "high"]
-DocumentationQuality = Literal["poor", "fair", "good", "excellent"]
-ExperienceSignal = Literal["junior", "mid", "senior"]
+ComplexityLevel = Literal["Beginner", "Intermediate", "Advanced"]
+DocumentationQuality = Literal["Poor", "Adequate", "Excellent"]
 
 
-class RepoAssessment(BaseModel):
-    """AI-generated assessment of a single public GitHub repository."""
+class RepoAssessmentLLM(BaseModel):
+    """
+    Schema sent to OpenAI Structured Outputs.
+    Only fields the model should infer — not ground-truth repo facts.
+    """
 
-    repo_name: str = Field(
-        ...,
-        description="Repository name as it appears on GitHub (e.g. 'my-api-project').",
-    )
     complexity_level: ComplexityLevel = Field(
         ...,
-        description="Technical complexity relative to typical portfolio projects.",
+        description=(
+            "Technical complexity relative to typical public portfolio projects. "
+            "Use Advanced only with strong explicit evidence. "
+            "Intermediate is normal for solid portfolio work."
+        ),
     )
     documentation_quality: DocumentationQuality = Field(
         ...,
-        description="How clear and complete the README is for a recruiter or hiring manager.",
+        description=(
+            "README clarity and completeness for a recruiter. "
+            "Poor if missing or nearly empty. Do not reward marketing language without substance."
+        ),
     )
-    estimated_experience_signal: ExperienceSignal = Field(
+    estimated_experience_signal: str = Field(
         ...,
-        description="Rough seniority signal inferred from code scope, README, and project structure.",
+        description=(
+            "One short sentence on seniority signal based only on documented evidence. "
+            "Be conservative; do not assume unstated skills."
+        ),
+        min_length=10,
+        max_length=200,
     )
     summary: str = Field(
         ...,
-        description="2-3 sentence recruiter-friendly summary of what the project demonstrates.",
-        min_length=10,
-        max_length=500,
+        description=(
+            "One to two factual sentences for a technical recruiter. "
+            "Mention concrete observations from the README/metadata."
+        ),
+        min_length=20,
+        max_length=400,
     )
-    has_readme: bool = Field(
-        ...,
-        description="Whether a README was found and used for this assessment.",
+
+
+class RepoAssessment(BaseModel):
+    """
+    Full per-repo assessment returned by the API (LLM output + Phase 2 facts).
+    When has_readme is False, judgment fields are null — we do not invent ratings.
+    """
+
+    repo_name: str
+    has_readme: bool
+    complexity_level: Optional[ComplexityLevel] = None
+    documentation_quality: Optional[DocumentationQuality] = None
+    estimated_experience_signal: Optional[str] = None
+    summary: str
+    assessment_error: Optional[str] = None
+
+
+class CandidateAnalysisResponse(BaseModel):
+    """Full API response for GET /api/analyze/{username}."""
+
+    username: str
+    profile_url: str
+    public_repos: int = Field(
+        ..., description="Total public repos on the GitHub profile"
     )
+    repos_analyzed: int = Field(
+        ..., description="Repos returned after fork filter + cap (assessed or skipped)"
+    )
+    assessments: list[RepoAssessment]
