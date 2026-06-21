@@ -1,0 +1,24 @@
+.empty-results {
+    padding: 1.25rem;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+  }
+  
+  .empty-results-title {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  .empty-results-text {
+    margin: 0;
+    color: #374151;
+  }
+  
+  .empty-results-hint {
+    margin: 0.75rem 0 0;
+    font-size: 0.9rem;
+    color: #6b7280;
+  }

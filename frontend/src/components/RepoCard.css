@@ -1,0 +1,84 @@
+.repo-card {
+  padding: 1.25rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+  
+  .repo-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .repo-card-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+  
+  .repo-card-title a {
+    color: #1d4ed8;
+    text-decoration: none;
+  }
+  
+  .repo-card-title a:hover {
+    text-decoration: underline;
+  }
+  
+  .repo-card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .repo-card-flag {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+  
+  .repo-card-flag-muted {
+    color: #4b5563;
+    background: #f3f4f6;
+  }
+  
+  .repo-card-flag-error {
+    color: #991b1b;
+    background: #fef2f2;
+  }
+  
+  .repo-card-summary {
+    margin: 0;
+    color: #111827;
+  }
+  
+  .repo-card-signal {
+    margin: 0.75rem 0 0;
+    font-size: 0.9rem;
+    color: #4b5563;
+  }
+  
+  .repo-card-signal-label {
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .repo-card {
+    padding: 1.25rem;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  
+  .repo-card:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  }
+
