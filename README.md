@@ -137,10 +137,10 @@ Backend runs at **http://localhost:8000**. Interactive API docs: **http://localh
 
 **Required environment variables** (`backend/.env`):
 
-| Variable         | Description                                                                                                                                                                        |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GITHUB_TOKEN`   | GitHub Personal Access Token. **Required** — the app raises an error at startup if missing. No scopes needed for public read-only data; raises rate limit to ~5,000 requests/hour. |
-| `OPENAI_API_KEY` | OpenAI API key. **Required** for all AI assessments.                                                                                                                               |
+| Variable         | Description                                                                                                                                                                                         |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GITHUB_TOKEN`   | GitHub Personal Access Token. No scopes needed for public read-only data; raises rate limit to ~5,000 requests/hour. If the their is not Access token, the system will work with the basic api call |
+| `OPENAI_API_KEY` | OpenAI API key. **Required** for all AI assessments.                                                                                                                                                |
 
 ### Frontend
 
