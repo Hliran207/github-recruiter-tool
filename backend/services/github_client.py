@@ -4,13 +4,14 @@ from config import GITHUB_API_BASE_URL, get_github_token
 
 
 def build_github_headers() -> dict[str, str]:
-    token = get_github_token()
-
-    return {
+    headers = {
         "Accept": "application/vnd.github+json",
-        "Authorization": f"Bearer {token}",
         "X-GitHub-Api-Version": "2022-11-28",
     }
+    token = get_github_token()
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    return headers
 
 
 def create_github_client() -> httpx.AsyncClient:

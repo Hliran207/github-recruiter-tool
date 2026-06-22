@@ -20,13 +20,11 @@ GITHUB_API_BASE_URL = "https://api.github.com"
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
 
-def get_github_token() -> str:
-    token = GITHUB_TOKEN
-    if not token:
-        raise RuntimeError(
-            "GITHUB_TOKEN is not set. Add it to backend/.env (see .env.example)."
-        )
-    return token
+def get_github_token() -> str | None:
+    """Return the GitHub PAT when set; otherwise None (unauthenticated API, lower rate limits)."""
+    if not GITHUB_TOKEN or not GITHUB_TOKEN.strip():
+        return None
+    return GITHUB_TOKEN.strip()
 
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
