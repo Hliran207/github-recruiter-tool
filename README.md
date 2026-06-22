@@ -1,8 +1,6 @@
 # GitHub Recruiter Tool
 
-I built this as a take-home assignment for a Junior Full-Stack Developer position at Orha AI. The tool helps a hiring manager paste a candidate's GitHub username (or profile URL) and quickly skim a structured, AI-generated assessment of their public projects — complexity, documentation quality, and an experience signal — without reading every README themselves. I designed it as a recruiter-first screening aid, not a general-purpose GitHub explorer.
-
----
+## A recruiter-facing tool that takes a GitHub username and returns AI-generated assessments of each public repository — complexity level, documentation quality, and an experience signal — to help hiring managers screen candidates without reading every README manually.
 
 ## Tech Stack
 
@@ -82,6 +80,8 @@ I use `client.chat.completions.parse()` with `response_format=RepoAssessmentLLM`
 
 I wrote explicit calibration rules in `SYSTEM_PROMPT`: prefer the lower plausible label when evidence is ambiguous, require strong proof before "Advanced", treat README marketing language as non-evidence, and keep summaries factual. I did this because inflated AI assessments are harmful in hiring — a recruiter who trusts flattering over-ratings makes worse decisions than one who gets conservative ratings. Without explicit instructions, models tend toward generous labels.
 
+I set temperature to 0.2 for the AI calls. Lower temperature reduces creative variation and keeps labels consistent across repos — the same project assessed twice should get the same complexity_level. High temperature makes sense for creative writing; it's wrong for an evaluation task where consistency is the goal.
+
 ### No-README handling
 
 When a repo has no README (or empty content), I **skip the OpenAI call** and return null judgment fields with the summary `"No README available — assessment skipped."` I deliberately do not assign "Poor" or "Beginner" because that would imply I assessed something when I had no documentation. The alternative — calling the model on metadata alone — risks fabricated project narratives from repo name and star count alone.
@@ -92,7 +92,7 @@ I run AI assessments with `asyncio.gather(..., return_exceptions=True)`. If one 
 
 ### Badge colors
 
-In `badgeTones.ts`, complexity uses gray / blue / green (Beginner / Intermediate / Advanced) and documentation uses rose / amber / green (Poor / Adequate / Excellent). Badges always show the text label, not color alone. I kept the mapping simple and consistent across cards.
+In `badgeTones.ts`, complexity uses gray / blue / green (Beginner / Intermediate / Advanced) and documentation uses rose / amber / green (Poor / Adequate / Excellent). Badges always show the text label, not color alone. Complexity uses a neutral tiered palette (gray/blue/green) because Beginner is descriptive, not a flaw — a well-scoped junior project should not show a red badge. Documentation quality uses a warning-style palette (rose/amber/green) because poor documentation is a genuine signal worth flagging visually. Both badges include a text label so the encoding works for colorblind users.
 
 ### Frontend state and HTTP
 
@@ -101,6 +101,10 @@ I used plain React `useState` — three UI states and one API response do not ju
 ### Input normalization (client + server)
 
 Both the frontend and backend normalize usernames and profile URLs. The server is the source of truth; the client normalizes too because profile URLs cannot be sent literally in `/api/analyze/{username}` path segments.
+
+### Output Format
+
+I chose a card-based layout with separate badges for complexity_level and documentation_quality because these are independent signals — a Beginner project with excellent documentation is meaningfully different from a Beginner project with no README, but a single field can't express that. Color-coded badges let a recruiter extract both signals across ten cards in seconds without reading every word.
 
 ---
 
@@ -133,10 +137,10 @@ Backend runs at **http://localhost:8000**. Interactive API docs: **http://localh
 
 **Required environment variables** (`backend/.env`):
 
-| Variable | Description |
-|----------|-------------|
-| `GITHUB_TOKEN` | GitHub Personal Access Token. **Required** — the app raises an error at startup if missing. No scopes needed for public read-only data; raises rate limit to ~5,000 requests/hour. |
-| `OPENAI_API_KEY` | OpenAI API key. **Required** for all AI assessments. |
+| Variable         | Description                                                                                                                                                                        |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GITHUB_TOKEN`   | GitHub Personal Access Token. **Required** — the app raises an error at startup if missing. No scopes needed for public read-only data; raises rate limit to ~5,000 requests/hour. |
+| `OPENAI_API_KEY` | OpenAI API key. **Required** for all AI assessments.                                                                                                                               |
 
 ### Frontend
 
@@ -165,11 +169,11 @@ No frontend `.env` is required for local dev.
 
 ## API Reference
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/health` | Health check — returns `{"status": "ok"}` |
-| `GET` | `/api/repos/{username}` | GitHub fetch only (no AI). Returns repos with README text. |
-| `GET` | `/api/analyze/{username}` | Full pipeline: GitHub fetch + AI assessment per repo. |
+| Method | Path                      | Description                                                |
+| ------ | ------------------------- | ---------------------------------------------------------- |
+| `GET`  | `/health`                 | Health check — returns `{"status": "ok"}`                  |
+| `GET`  | `/api/repos/{username}`   | GitHub fetch only (no AI). Returns repos with README text. |
+| `GET`  | `/api/analyze/{username}` | Full pipeline: GitHub fetch + AI assessment per repo.      |
 
 The `username` path parameter accepts a bare username, `@username`, or a `https://github.com/username` URL. Normalization runs on the server (and on the client before building the request URL).
 
